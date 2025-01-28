@@ -14,7 +14,7 @@ struct UserModel: Codable {
     let name: String
     let age: Int
     let company, email, address, about: String
-//    let registered: Date
+    let registered: Date
     let tags: [String]
     let friends: [FriendModel]
 }

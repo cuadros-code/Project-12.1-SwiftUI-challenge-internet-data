@@ -32,14 +32,18 @@ struct ContentView: View {
         if users.count >= 1 {
             return
         }
+        guard let url = URL(string: Constanst.usersURL) else {
+            return
+        }
+
         do {
-            guard let url = URL(string: Constanst.usersURL) else {
-                return
-            }
-            
             let (data, _) = try await URLSession.shared.data(from: url)
             
-            if let decodeUsers = try? JSONDecoder().decode(
+            
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            
+            if let decodeUsers = try? decoder.decode(
                 [UserModel].self,
                 from: data
             ) {
