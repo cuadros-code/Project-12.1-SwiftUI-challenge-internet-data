@@ -19,6 +19,6 @@ extension Color {
             Color.red,
             Color.brown
         ]
-        return colors.randomElement()?.opacity(0.3) ?? Color.teal
+        return colors.randomElement() ?? Color.teal
     }
 }

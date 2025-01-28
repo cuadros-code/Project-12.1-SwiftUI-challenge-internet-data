@@ -11,20 +11,24 @@ struct ContentView: View {
     
     @State private var users: [UserModel] = [UserModel]()
     
+    
+    
     var body: some View {
         NavigationStack {
             List {
                 ForEach(users, id: \UserModel.id) { user in
+                    let color = Color.random
+                    
                     NavigationLink {
-                        UserDetailView(user: user)
+                        UserDetailView(user: user, userColor: color)
                     } label: {
                         HStack {
-                            Text("\(firstLetter(name: user.name))")
+                            Text("\(StringUtility.firstLetter(string: user.name))")
                                 .font(.title)
                                 .fontWeight(.bold)
                                 .foregroundStyle(.white)
                                 .frame(width: 55, height: 55)
-                                .background(Color.random)
+                                .background(color.opacity(0.5))
                                 .clipShape(RoundedRectangle(cornerRadius: 6))
                             
                             VStack(alignment: .leading) {
@@ -46,10 +50,6 @@ struct ContentView: View {
         .task {
             await getUsers()
         }
-    }
-    
-    func firstLetter(name: String) -> Character {
-        return name.first ?? "N"
     }
     
     
