@@ -15,7 +15,28 @@ struct ContentView: View {
         NavigationStack {
             List {
                 ForEach(users, id: \UserModel.id) { user in
-                    Text(user.name)
+                    NavigationLink {
+                        UserDetailView(user: user)
+                    } label: {
+                        HStack {
+                            Text("\(firstLetter(name: user.name))")
+                                .font(.title)
+                                .fontWeight(.bold)
+                                .foregroundStyle(.white)
+                                .frame(width: 55, height: 55)
+                                .background(Color.random)
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                            
+                            VStack(alignment: .leading) {
+                                Text(user.name)
+                                    .font(.headline)
+                                Text(user.email)
+                                    .font(.subheadline)
+                            }
+                        }
+                    }
+                    
+                    
                 }
             }
             
@@ -27,6 +48,10 @@ struct ContentView: View {
         }
     }
     
+    func firstLetter(name: String) -> Character {
+        return name.first ?? "N"
+    }
+    
     
     func getUsers() async {
         if users.count >= 1 {
@@ -35,7 +60,7 @@ struct ContentView: View {
         guard let url = URL(string: Constanst.usersURL) else {
             return
         }
-
+        
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             
