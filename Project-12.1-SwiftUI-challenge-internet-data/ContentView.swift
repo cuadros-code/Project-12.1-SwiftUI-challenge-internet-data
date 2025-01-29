@@ -6,12 +6,12 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
     
-    @State private var users: [UserModel] = [UserModel]()
-    
-    
+    @Environment(\.modelContext) var modelContext
+    @Query(sort: \UserModel.name) var users: [UserModel]
     
     var body: some View {
         NavigationStack {
@@ -39,12 +39,10 @@ struct ContentView: View {
                             }
                         }
                     }
-                    
-                    
                 }
             }
             
-            .navigationTitle("Contacts")
+            .navigationTitle("Contacts (\(users.count))")
         }
         
         .task {
@@ -57,13 +55,12 @@ struct ContentView: View {
         if users.count >= 1 {
             return
         }
-        guard let url = URL(string: Constanst.usersURL) else {
+        guard let url = URL(string: Constants.usersURL) else {
             return
         }
         
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
-            
             
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
@@ -72,7 +69,9 @@ struct ContentView: View {
                 [UserModel].self,
                 from: data
             ) {
-                users = decodeUsers
+                for item in decodeUsers {
+                    modelContext.insert(item)
+                }
             } else {
                 print("Error decode data")
             }

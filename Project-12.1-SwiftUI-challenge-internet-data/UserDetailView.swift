@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct UserDetailView: View {
     
-    var user: UserModel
+    @Bindable var user: UserModel
     var userColor: Color
     
     var body: some View {
@@ -54,34 +55,44 @@ struct UserDetailView: View {
             .scrollIndicators(.hidden)
             .padding(.leading, 20)
             
-            
             Spacer()
         }
         .navigationTitle(user.name)
         .navigationBarTitleDisplayMode(.inline)
     }
+    
 }
 
 #Preview {
-    let user = UserModel(
-        id: "",
-        isActive: true,
-        name: "Kevin Cuadros",
-        age: 34,
-        company: "Personal",
-        email: "kscuadros@gmail.com",
-        address: "Av 12 street Cuadros",
-        about: "Occaecat consequat elit aliquip magna laboris dolore laboris sunt officia adipisicing reprehenderit sunt. Do in proident consectetur labore. Laboris pariatur quis incididunt nostrud labore ad cillum veniam ipsum ullamco. Dolore laborum commodo veniam nisi. Eu ullamco cillum ex nostrud fugiat eu consequat enim cupidatat. Non incididunt fugiat cupidatat reprehenderit nostrud eiusmod eu sit minim do amet qui cupidatat. Elit aliquip nisi ea veniam proident dolore exercitation irure est deserunt.",
-        registered: .now,
-        tags: [],
-        friends: [
-            FriendModel(id: "1", name: "Hawkins Patel"),
-            FriendModel(id: "2", name: "Jewel Sexton"),
-            FriendModel(id: "3", name: "JBerger Robertson"),
-            FriendModel(id: "4", name: "Hess Ford")
-        ]
-    )
-    NavigationStack {
-        UserDetailView(user: user, userColor: .blue)
+    do {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(
+            for: UserModel.self,
+            configurations: config
+        )
+        
+        let user = UserModel(
+            id: "",
+            isActive: true,
+            name: "Kevin Cuadros",
+            age: 34,
+            company: "Personal",
+            email: "kscuadros@gmail.com",
+            address: "Av 12 street Cuadros",
+            about: "Occaecat consequat elit aliquip magna laboris dolore laboris sunt officia adipisicing reprehenderit sunt. Do in proident consectetur labore. Laboris pariatur quis incididunt nostrud labore ad cillum veniam ipsum ullamco. Dolore laborum commodo veniam nisi. Eu ullamco cillum ex nostrud fugiat eu consequat enim cupidatat. Non incididunt fugiat cupidatat reprehenderit nostrud eiusmod eu sit minim do amet qui cupidatat. Elit aliquip nisi ea veniam proident dolore exercitation irure est deserunt.",
+            registered: .now,
+            tags: ["String"],
+            friends: [
+                FriendModel(id: "1", name: "Hawkins Patel"),
+                FriendModel(id: "2", name: "Jewel Sexton"),
+                FriendModel(id: "3", name: "JBerger Robertson"),
+                FriendModel(id: "4", name: "Hess Ford")
+            ]
+        )
+        
+        return UserDetailView(user: user, userColor: .accentColor)
+            .modelContainer(container)
+    } catch {
+        return Text("Failed to create container")
     }
-}
+} 
